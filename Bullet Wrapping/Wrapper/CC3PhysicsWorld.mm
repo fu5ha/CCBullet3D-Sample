@@ -46,6 +46,7 @@ extern "C" {
 		solver = new btSequentialImpulseConstraintSolver();
 		dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,broadphase,solver,collisionConfiguration);
 		[self setDiscreteDynamicsWorld:dynamicsWorld];
+        _collidingObjects = [[NSMutableArray alloc] init];
     }
 	
     return self;
@@ -56,6 +57,7 @@ extern "C" {
 	
 	[_lastStepTime release];
 	[_physicsObjects release];
+    [_collidingObjects release];
     delete broadphase;
     delete dynamicsWorld;
     delete collisionConfiguration;
@@ -138,11 +140,65 @@ extern "C" {
         object.node.location = CC3VectorMake(gPos.getX(), gPos.getY(), gPos.getZ());
         object.node.quaternion = quaternion;
     }
-    
+    int numManifolds = _discreteDynamicsWorld->getDispatcher()->getNumManifolds();
+	for (int i=0;i<numManifolds;i++)
+	{
+        NSMutableArray *_thisCollidingObjects = [[[NSMutableArray alloc] init] autorelease];
+        btVector3 ptA;
+        btVector3 ptB;
+        int objectNum = 0;
+		btPersistentManifold* contactManifold =  _discreteDynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+		btCollisionObject* obA = static_cast<btCollisionObject*>(contactManifold->getBody0());
+		btCollisionObject* obB = static_cast<btCollisionObject*>(contactManifold->getBody1());
+        
+		int numContacts = contactManifold->getNumContacts();
+		for (int j=0;j<numContacts;j++)
+		{
+			btManifoldPoint& pt = contactManifold->getContactPoint(j);
+			if (pt.getDistance()<0.f)
+			{
+				ptA = pt.getPositionWorldOnA();
+				ptB = pt.getPositionWorldOnB();
+			}
+		}
+        for (CC3PhysicsObject3D *object in _physicsObjects) {
+            if (object.rigidBody == obA or object.rigidBody == obB) {
+                if (objectNum == 1) {
+                    _collisionObject1 = object;
+                    objectNum ++;
+                } else {
+                    _collisionObject2 = object;
+                }
+                if (object.colliding) {
+                    [_thisCollidingObjects addObject:object];
+                } else {
+                    [_collidingObjects addObject:object];
+                    [_thisCollidingObjects addObject:object];
+                    object.colliding = YES;
+                }
+            }
+        }
+        _collisionObject1.collidingWith = _collisionObject2;
+        _collisionObject2.collidingWith = _collisionObject1;
+        for (CC3PhysicsObject3D *object in _collidingObjects) {
+            if (![_thisCollidingObjects containsObject:object]) {
+                [_collidingObjects removeObject:object];
+                object.colliding = NO;
+                object.collidingWith = nil;
+            }
+        }
+        CC3Vector cptA = cc3v(ptA.getX(), ptA.getY(), ptA.getZ());
+        CC3Vector cptB = cc3v(ptB.getX(), ptB.getY(), ptB.getZ());
+	}
 }
 
 - (void) setGravity:(float)x y:(float)y z:(float)z {
 	_discreteDynamicsWorld->setGravity(btVector3(x, y, z));
+}
+
+- (NSMutableArray *) getCollidingObjects
+{
+    return _collidingObjects;
 }
 
 - (CC3PhysicsObject3D *) createPhysicsObject:(CC3Node *)node shape:(btCollisionShape *)shape mass:(float)mass restitution:(float)restitution position:(CC3Vector)position {

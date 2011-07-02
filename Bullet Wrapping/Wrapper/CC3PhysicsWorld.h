@@ -47,9 +47,12 @@ class btCollisionShape;
     btDefaultCollisionConfiguration *collisionConfiguration;
     btSequentialImpulseConstraintSolver *solver;
     btCollisionDispatcher *dispatcher;
-
+    
 	NSDate * _lastStepTime;
 	NSMutableArray * _physicsObjects;
+    NSMutableArray * _collidingObjects;
+    CC3PhysicsObject3D *_collisionObject1;
+    CC3PhysicsObject3D *_collisionObject2;
     
     BOOL isstatic;
 
@@ -107,5 +110,7 @@ class btCollisionShape;
  * @return (autorelease) The created CC3PhysicsObject3D containing the btRigidBody and the CC3Node.
  */
 - (CC3PhysicsObject3D *) createPhysicsObject:(CC3Node *)node shape:(btCollisionShape *)shape mass:(float)mass restitution:(float)restitution position:(CC3Vector)position;
+
+- (NSMutableArray *) getCollidingObjects;
 
 @end

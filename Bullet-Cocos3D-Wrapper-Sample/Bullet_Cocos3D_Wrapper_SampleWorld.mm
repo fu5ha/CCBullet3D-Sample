@@ -112,8 +112,9 @@ extern "C" {
     sphereObject.rigidBody->setDamping(0.1,0.8);
     sphereObject2.rigidBody->setDamping(0.1,0.8);
     [sphereObject applyImpulse:cc3v(0,2,0) withPosition:cc3v(sphereObject.node.location.x, sphereObject.node.location.y + 0.5, sphereObject.node.location.z)];
-    float randz = arc4random() % 1;
-    [sphereObject2 applyImpulse:cc3v(0.5,0,randz) withPosition:sphereObject2.node.location];
+    int random = rand() % 100;
+    float val = random / 100.0f;
+    [sphereObject2 applyImpulse:cc3v(val,0,val) withPosition:sphereObject2.node.location];
 }
 
 

@@ -192,6 +192,9 @@ extern "C" {
  */
 -(void) updateAfterTransform: (CC3NodeUpdatingVisitor*) visitor {
     [_physicsWorld synchTransformation];
+    if (sphereObject.colliding) {
+        CCLOG(@"SPHERE IS COLLIDING");
+    }
 }
 
 @end

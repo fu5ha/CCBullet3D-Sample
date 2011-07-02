@@ -7,10 +7,16 @@
 //
 
 
+#import "CC3PhysicsWorld.h"
+#import "CC3PhysicsObject3D.h"
 #import "CC3World.h"
 #import "CC3MeshNode.h"
+#import "btBulletDynamicsCommon.h"
 
 /** A sample application-specific CC3World subclass.*/
-@interface Bullet_Cocos3D_Wrapper_SampleWorld : CC3World {}
+@interface Bullet_Cocos3D_Wrapper_SampleWorld : CC3World {
+    CC3PhysicsObject3D *sphereObject;
+    CC3PhysicsWorld *_physicsWorld;
+}
 
 @end

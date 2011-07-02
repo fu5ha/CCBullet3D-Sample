@@ -109,6 +109,7 @@
 //	CCScene *scene = [CCScene node];
 //	[scene addChild: mainLayer];
 //	[[CCDirector sharedDirector] runWithScene: scene];
+    srandom(time(NULL));
 	
 }
 

@@ -17,7 +17,7 @@ extern "C" {
 #import "CC3Camera.h"
 #import "CC3Light.h"
 #import "CC3PODMaterial.h"
-
+#import "cocos2d.h"
 
 @implementation Bullet_Cocos3D_Wrapper_SampleWorld
 
@@ -63,7 +63,6 @@ extern "C" {
 	[self addContentFromPODResourceFile: @"hello-world.pod"];
     [self addContentFromPODResourceFile: @"test.pod"];
     [self addContentFromPODResourceFile: @"Sphere_POD.pod"];
-	
 	// Create OpenGL ES buffers for the vertex arrays to keep things fast and efficient,
 	// and to save memory, release the vertex data in main memory because it is now redundant.
 	[self createGLBuffers];
@@ -81,9 +80,8 @@ extern "C" {
 	CC3MeshNode* helloTxt = (CC3MeshNode*)[self getNodeNamed: @"Hello"];
     CC3MeshNode* groundNode = (CC3MeshNode*)[self getNodeNamed:@"Cube"];
     CC3MeshNode* sphereNode = (CC3MeshNode*)[self getNodeNamed:@"Sphere"];
-	CCActionInterval* partialRot = [CC3RotateBy actionWithDuration: 1.0
-														  rotateBy: cc3v(0.0, 30.0, 0.0)];
-	//[helloTxt runAction: [CCRepeatForever actionWithAction: partialRot]];
+    CC3MeshNode* sphereNode2 = [sphereNode copy];
+    [self addChild:sphereNode2];
 	
 	// To make things a bit more appealing, set up a repeating up/down cycle to
 	// change the color of the text from the original red to blue, and back again.
@@ -100,17 +98,21 @@ extern "C" {
 													   blue: startColor.b];
     CCActionInterval* tintCycle = [CCSequence actionOne: tintDown two: tintUp];
 	[helloTxt runAction: [CCRepeatForever actionWithAction: tintCycle]];
+    [sphereNode2 runAction: [CCRepeatForever actionWithAction: tintCycle]];
     btCollisionShape *sphereShape = new btSphereShape(1);
-    btCollisionShape *helloShape = new btBoxShape(btVector3(1.75,0.75,0.2));
+    btCollisionShape *helloShape = new btBoxShape(btVector3(1,1.5,0.1));
     btCollisionShape *groundShape = new btBoxShape(btVector3(5,0.1,5));
     helloTxt.location = cc3v(2,20,0);
+    sphereNode2.location = cc3v(-0.75,17,0);
     sphereNode.location = cc3v(0,10,0);
-    CC3PhysicsObject3D *helloObject = [_physicsWorld createPhysicsObject:helloTxt shape:helloShape mass:1 restitution:0.3 position:helloTxt.location];
+    CC3PhysicsObject3D *helloObject = [_physicsWorld createPhysicsObject:helloTxt shape:helloShape mass:1 restitution:0.8 position:helloTxt.location];
     CC3PhysicsObject3D *groundObject = [_physicsWorld createPhysicsObject:groundNode shape:groundShape mass:0 restitution:1.0 position:groundNode.location];
     sphereObject = [_physicsWorld createPhysicsObject:sphereNode shape:sphereShape mass:2 restitution:1.0 position:sphereNode.location];
-    
+    CC3PhysicsObject3D *sphereObject2 = [_physicsWorld createPhysicsObject:sphereNode2 shape:sphereShape mass:0.5 restitution:1.0 position:sphereNode2.location];
     sphereObject.rigidBody->setDamping(0.1,0.8);
+    sphereObject2.rigidBody->setDamping(0.1,0.8);
     [sphereObject applyImpulse:cc3v(0,2,0) withPosition:cc3v(sphereObject.node.location.x, sphereObject.node.location.y + 0.5, sphereObject.node.location.z)];
+    [sphereObject2 applyImpulse:cc3v(0.5,0,0.5) withPosition:sphereObject2.node.location];
 }
 
 

@@ -127,6 +127,8 @@
 
 -(void) applicationDidEnterBackground:(UIApplication*)application {
 	[[CCDirector sharedDirector] stopAnimation];
+    [self applicationWillTerminate:application];
+    exit(0);
 }
 
 -(void) applicationWillEnterForeground:(UIApplication*)application {

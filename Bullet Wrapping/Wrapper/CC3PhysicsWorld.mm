@@ -145,37 +145,34 @@ extern "C" {
 	
     for (int i=0;i<numManifolds;i++)
 	{
-        int obNum = 1;
 		btPersistentManifold* contactManifold =  _discreteDynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
 		btRigidBody* obA = static_cast<btRigidBody*>(contactManifold->getBody0());
 		btRigidBody* obB = static_cast<btRigidBody*>(contactManifold->getBody1());
         for (CC3PhysicsObject3D * object in _physicsObjects) {
             if (obA == object.rigidBody or obB == object.rigidBody) {
                 [_thisCollidingObjects addObject:object];
-                if (object.colliding) {
-                    object.collisionPhase = @"colliding";
+                if (object.collidingCount > 0) {
                 } else {
                     [_collidingObjects addObject:object];
                     object.colliding = YES;
-                    object.collisionPhase = @"began";
+                    object.collidingCount = 1;
                 }
                 if (obA == object.rigidBody) {
-                    _collisionObject1 = object;
+                    object.collidingWith = obB;
                 } else {
-                    _collisionObject2 = object;
+                    object.collidingWith = obA;
                 }
             }
         }
-        _collisionObject1.collidingWith = _collisionObject2;
-        _collisionObject2.collidingWith = _collisionObject1;
-        
 	}
     NSMutableArray *objectsToDelete = [[[NSMutableArray alloc] init] autorelease];
     for (CC3PhysicsObject3D *object in _collidingObjects) {
-        if (!([_thisCollidingObjects containsObject:object])) {
+        if ([_thisCollidingObjects containsObject:object]) {
+        } else {
             object.colliding = NO;
             object.collidingWith = nil;
             object.collisionPhase = @"ended";
+            object.collidingCount = 0;
         }
     }
     for (CC3PhysicsObject3D *object in objectsToDelete) {

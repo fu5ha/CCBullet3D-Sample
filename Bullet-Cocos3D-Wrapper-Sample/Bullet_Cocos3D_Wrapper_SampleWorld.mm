@@ -192,16 +192,8 @@ extern "C" {
  */
 -(void) updateAfterTransform: (CC3NodeUpdatingVisitor*) visitor {
     [_physicsWorld synchTransformation];
-    if (sphereObject.collidingWith == groundObject) {
-        if (helloObject.collisionPhase == @"began") {
-            CCLOG(@"sphere collision began");
-        }
-        if (helloObject.collisionPhase == @"colliding") {
-            CCLOG(@"sphere collision is colliding");
-        }
-        if (helloObject.collisionPhase == @"ended") {
-            CCLOG(@"sphere collision ENDED");
-        }
+    if (sphereObject.collidingWith == groundObject.rigidBody) {
+        CCLOG(@"sphere is colliding with the ground");
     }
 }
 

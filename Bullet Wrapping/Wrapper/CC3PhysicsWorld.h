@@ -51,6 +51,7 @@ class btCollisionShape;
 	NSDate * _lastStepTime;
 	NSMutableArray * _physicsObjects;
     NSMutableArray * _collidingObjects;
+    NSMutableArray * _thisCollidingObjects;
     CC3PhysicsObject3D *_collisionObject1;
     CC3PhysicsObject3D *_collisionObject2;
     

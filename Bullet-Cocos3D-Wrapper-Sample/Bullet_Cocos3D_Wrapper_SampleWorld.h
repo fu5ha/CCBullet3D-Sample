@@ -16,6 +16,9 @@
 /** A sample application-specific CC3World subclass.*/
 @interface Bullet_Cocos3D_Wrapper_SampleWorld : CC3World {
     CC3PhysicsObject3D *sphereObject;
+    CC3PhysicsObject3D *helloObject;
+    CC3PhysicsObject3D *sphereObject2;
+    CC3PhysicsObject3D *groundObject;
     CC3PhysicsWorld *_physicsWorld;
 }
 

@@ -105,10 +105,10 @@ extern "C" {
     helloTxt.location = cc3v(2,20,0);
     sphereNode2.location = cc3v(-0.75,17,0);
     sphereNode.location = cc3v(0,10,0);
-    CC3PhysicsObject3D *helloObject = [_physicsWorld createPhysicsObject:helloTxt shape:helloShape mass:1 restitution:0.8 position:helloTxt.location];
-    CC3PhysicsObject3D *groundObject = [_physicsWorld createPhysicsObject:groundNode shape:groundShape mass:0 restitution:1.0 position:groundNode.location];
+    helloObject = [_physicsWorld createPhysicsObject:helloTxt shape:helloShape mass:1 restitution:0.8 position:helloTxt.location];
+    groundObject = [_physicsWorld createPhysicsObject:groundNode shape:groundShape mass:0 restitution:1.0 position:groundNode.location];
     sphereObject = [_physicsWorld createPhysicsObject:sphereNode shape:sphereShape mass:2 restitution:1.0 position:sphereNode.location];
-    CC3PhysicsObject3D *sphereObject2 = [_physicsWorld createPhysicsObject:sphereNode2 shape:sphereShape mass:0.5 restitution:1.0 position:sphereNode2.location];
+    sphereObject2 = [_physicsWorld createPhysicsObject:sphereNode2 shape:sphereShape mass:0.5 restitution:1.0 position:sphereNode2.location];
     sphereObject.rigidBody->setDamping(0.1,0.8);
     sphereObject2.rigidBody->setDamping(0.1,0.8);
     [sphereObject applyImpulse:cc3v(0,2,0) withPosition:cc3v(sphereObject.node.location.x, sphereObject.node.location.y + 0.5, sphereObject.node.location.z)];
@@ -193,7 +193,15 @@ extern "C" {
 -(void) updateAfterTransform: (CC3NodeUpdatingVisitor*) visitor {
     [_physicsWorld synchTransformation];
     if (sphereObject.colliding) {
-        CCLOG(@"SPHERE IS COLLIDING");
+        if (helloObject.collisionPhase == @"began") {
+            CCLOG(@"sphere collision began");
+        }
+        if (helloObject.collisionPhase == @"colliding") {
+            CCLOG(@"sphere collision is colliding");
+        }
+        if (helloObject.collisionPhase == @"ended") {
+            CCLOG(@"sphere collision ENDED");
+        }
     }
 }
 
